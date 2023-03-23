@@ -1,7 +1,9 @@
 #include <iostream>
 #include <fstream>
 #include <string>
-
+#include <iomanip>
+#include <cstdlib>
+#include <ctime>
 
 //++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 using namespace std;
@@ -158,8 +160,92 @@ void crearCuenta() {
     archivoCuentas.close();
 }
 
-//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
+
+//-----------------------HundirLaFlota------------------------------------
+const int tamanotablero = 10;
+
+void iniciartablero(char tablero[][tamanotablero]) {
+    for (int i = 0; i < tamanotablero; i++) {
+        for (int j = 0; j < tamanotablero; j++) {
+            tablero[i][j] = '.';
+        }
+    }
+}
+
+void mostrartablero(char tablero[][tamanotablero]) {
+    cout << "  ";
+    for (int i = 0; i < tamanotablero; i++) {
+        cout << i << " ";
+    }
+    cout << endl;
+
+    for (int i = 0; i < tamanotablero; i++) {
+        cout << i << " ";
+        for (int j = 0; j < tamanotablero; j++) {
+            cout << tablero[i][j] << " ";
+        }
+        cout << endl;
+    }
+}
+
+bool estocado(char tablero[][tamanotablero], int fila, int columna) {
+    if (tablero[fila][columna] == 'S') {
+        tablero[fila][columna] = 'X';
+        return true;
+    } else if (tablero[fila][columna] == '.') {
+        tablero[fila][columna] = 'O';
+    }
+    return false;
+}
+
+void posbarco(char tablero[][tamanotablero], int numbarcos) {
+    srand(time(NULL));
+    int count = 0;
+    while (count < numbarcos) {
+        int fila = random() % tamanotablero;
+        int columna = random() % tamanotablero;
+        if (tablero[fila][columna] == '.') {
+            tablero[fila][columna] = 'S';
+            count++;
+        }
+    }
+}
+
+bool siderrota(char tablero[][tamanotablero]) {
+    for (int i = 0; i < tamanotablero; i++) {
+        for (int j = 0; j < tamanotablero; j++) {
+            if (tablero[i][j] == 'S') {
+                return false;
+            }
+        }
+    }
+    return true;
+}
+
+void turnojug(char tablero[][tamanotablero]) {
+    int fila, columna;
+    cout << "Introduce fila y columna: ";
+    cin >> fila >> columna;
+    if (estocado(tablero, fila, columna)) {
+        cout << "Tocado!\n";
+    } else {
+        cout << "Fallaste!\n";
+    }
+}
+
+void turnomaquina(char tablero[][tamanotablero]) {
+    srand(time(NULL));
+    int fila = random() % tamanotablero;
+    int columna = random() % tamanotablero;
+    if (estocado(tablero, fila, columna)) {
+        cout << "La máquina ha impactado en (" << fila << ", " << columna << ")\n";
+    } else {
+        cout << "La máquina ha fallado en (" << fila << ", " << columna << ")\n";
+    }
+}
+
+//++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 int main() {
     string nombreUsuario, contrasena;
@@ -191,14 +277,19 @@ int main() {
         cout<<endl<<endl;
  
 
+int quejuego;
+cout<<" Opciones "<<endl;
+cout<<"     1): 4 en línea. "<<endl;
+cout<<"     2): Hundir la flota. "<<endl;
+cout<<"¿Qué quieres hacer?: ";cin>>quejuego;
+system("clear");
 
-
+while (quejuego==1){
 //------------------------------------Jugar 4enlínea--------------------------------------
 
 char jugadorActual = 'X';
 inicializarTablero();
 mostrarTablero();
-    system("clear");
 
 
 while (true) {
@@ -224,16 +315,40 @@ while (true) {
 }
 
 
+}
+while (quejuego==2){
+//------------------------------------Jugar HundirLaFlota--------------------------------------
+char playertablero[tamanotablero][tamanotablero];
+char maquinatablero[tamanotablero][tamanotablero];
+iniciartablero(playertablero);
+iniciartablero(maquinatablero);
+posbarco(playertablero, 5);
+posbarco(maquinatablero, 5);
 
+while (!siderrota(playertablero) && !siderrota(maquinatablero)) {
+    cout << "Tu turno:\n";
+    mostrartablero(playertablero);
+    turnojug(maquinatablero);
 
+    if (!siderrota(maquinatablero)) {
+        cout << "Turno de la máquina:\n";
+        turnomaquina(playertablero);
+        mostrartablero(playertablero);
+    }
+}
 
-
-
+if (siderrota(playertablero)) {
+    cout << "Enhorabuena! Has ganado el juego!\n";
+} else {
+    cout << "Lo siento, te ha ganado la máquina.\n";
+}
+}
+    }
 //--------------------------------------------------------------------------
     
     
     
-    } else if (respuesta == 'N' || respuesta == 'n') {
+     else if (respuesta == 'N' || respuesta == 'n') {
         // Crear nueva cuenta
         crearCuenta();
         cout << "Cuenta creada exitosamente. Inicie sesión para continuar." << endl;
