@@ -1,3 +1,5 @@
+(desplegar readme para leer)
+
 Juego de 4 en línea Y Hundir la flota
 Este es un programa escrito en C++ para el popular juego 4 en línea y Hundir la flota. 
 El programa permite a dos jugadores jugar en el mismo equipo. 
